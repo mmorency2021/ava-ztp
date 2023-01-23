@@ -1,0 +1,64 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "sno-ocp12"
+  namespace: "sno-ocp12"
+spec:
+  baseDomain: "hubcluster-1.lab.eng.cert.redhat.com"
+  pullSecretRef:
+    name: "sno-ocp12-1"
+  clusterImageSetNameRef: "openshift-v4.12.0"
+  sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzmhhwZDJFsZATnDIm8bf2T2K6n+3fc5bVEtCBPvORhh4N5fN5hp/dKOcRmC1+aiwrHXbfUY2UeBN+cMRFUyUNpwY6K2289WDUuvHqxGAfMo1MGIY8lL3S53aJTDtHse03y6OKpBWiJypBpEGHkLMTkQ1/vkhn50Y7eTyy3fhI87k/xMikBEQS7HVdTF4OM4KZlZvIoXmTgak1hA7AO4LT0RPw5GxpsLV0OEhYtxyuEO3EQmNspPCUNlybN2fzX7mjexdpbXz0dsCVW1YGuPf62SMsFjSVBXarQ9WisaU7WQhPSEXTK8prExsf/pk67eaw1II9DpfK88/6vyFvm6Z9RU3NacktLEHZyVNdb4fdyhIauUKCCBXSUc/zKglLDBX9MjdgsUS1z1TfmzVH4Md0Rcx2WldfQoUbYA+l8/2aHuiCU3lORw+Ubck3PPYD+1jSraQ4Ik09RntnBCql6qkeBhHKzAzMjsGjoMKLc+OQahoPlBzwy48UO9IbTcvsfNE= root@jumphost1"
+  clusters:
+  - clusterName: "sno-ocp12"
+    clusterLabels:
+      sites : "sno-ocp12"
+    networkType: "OVNKubernetes"
+    clusterNetwork:
+      - cidr: 10.136.0.0/14
+        hostPrefix: 23
+    machineNetwork:
+      - cidr: 192.168.24.0/25
+    serviceNetwork:
+      - 172.31.0.0/16
+    additionalNTPSources:
+      - 192.168.24.80
+    nodes:
+      - hostName: "master-0.sno-ocp12.hubcluster-1.lab.eng.cert.redhat.com"
+        role: master
+        bmcAddress: idrac-virtualmedia://192.168.24.159/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "sno-ocp12"
+        bootMACAddress: "b8:ce:f6:56:48:aa"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: /dev/sdb
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno1
+                type: ethernet
+                state: up
+                ipv4:
+                  enabled: true
+                  dhcp: false
+                  address:
+                    - ip: 192.168.24.91
+                      prefix-length: 25
+                ipv6:
+                  enabled: false
+            dns-resolver:
+              config:
+                server:
+                  - 192.168.24.80
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 192.168.24.1
+                  next-hop-interface: eno1
+          interfaces:
+            - name: "eno1"
+              macAddress: "b8:ce:f6:56:48:aa"
+
+
